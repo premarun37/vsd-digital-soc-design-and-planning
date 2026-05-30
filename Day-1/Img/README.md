@@ -1,85 +1,47 @@
-\# Day 1 - Inception of Open-Source EDA, OpenLANE and Sky130 PDK
+# Day 1 - Inception of Open-Source EDA, OpenLANE and Sky130 PDK
 
-
-
-\## Objective
-
-
+## Objective
 
 The objective of Day-1 is to understand the basic ASIC design flow, OpenLANE framework, synthesis process, design constraints, and floorplanning concepts using the picorv32a design.
 
+---
 
-
-\---
-
-
-
-\# ASIC Design Flow
-
-
+# ASIC Design Flow
 
 The complete RTL-to-GDSII flow consists of:
 
-
-
 ```text
-
 RTL Design
-
-&#x20;   ↓
-
+    ↓
 Synthesis
-
-&#x20;   ↓
-
+    ↓
 Floorplanning
-
-&#x20;   ↓
-
+    ↓
 Placement
-
-&#x20;   ↓
-
+    ↓
 Clock Tree Synthesis (CTS)
-
-&#x20;   ↓
-
+    ↓
 Routing
-
-&#x20;   ↓
-
-Static Timing Analysis (STA) + Design Rule Check (DRC) + Layout Versus Schematic (LVS)
-
-
-
-&#x20;   ↓
-
+    ↓
+Static Timing Analysis (STA)
+           +
+Design Rule Check (DRC)
+           +
+Layout Versus Schematic (LVS)
+    ↓
 GDSII (Tapeout)
 ```
 
+---
 
+# OpenLANE Invocation
 
-\---
+OpenLANE is an open-source RTL-to-GDSII automated flow based on OpenROAD and the Sky130 PDK.
 
-
-
-\# OpenLANE Invocation
-
-
-
-OpenLANE is an open-source RTL-to-GDSII automated flow based on OpenROAD and Sky130 PDK.
-
-
-
-\### Command Used
-
-
+### Commands Used
 
 ```tcl
-
-
-
-cd Desktop/work/tools/openlane\_working\_dir/openlane
+cd Desktop/work/tools/openlane_working_dir/openlane
 
 docker
 
@@ -88,332 +50,168 @@ docker
 package require openlane 0.9
 
 prep -design picorv32a
-
 ```
 
+### Screenshot
 
+![OpenLANE Invoke](Img/Img_1_OpenLane_Invoke.png)
 
-\### Screenshot
+### Observation
 
+* OpenLANE environment was successfully launched.
+* The picorv32a design was prepared for the RTL-to-GDSII flow.
 
+---
 
-!\[OpenLANE Invoke](Img/Img\_1(OpenLane%20invoke).png)
-
-
-
-\### Observation
-
-
-
-\- OpenLANE environment was successfully launched.
-
-\- picorv32a design was prepared for the RTL-to-GDSII flow.
-
-
-
-\---
-
-
-
-\# Running Synthesis
-
-
+# Running Synthesis
 
 Synthesis converts RTL Verilog code into a gate-level netlist using standard cells from the Sky130 library.
 
-
-
-\### Command
-
-
+### Command
 
 ```tcl
-
-run\\\_synthesis
-
+run_synthesis
 ```
 
+### Screenshot
 
+![Running Synthesis](Img/Img_2_Running_Synthesis.png)
 
-\### Screenshot
+### Observation
 
+* RTL code is mapped into standard cells.
+* Timing and area optimization are performed during synthesis.
 
+---
 
-!\[Running Synthesis](Img/Img\_2(Running%20synthesis%20of%20picorv32a%20design)).png)
+# Successful Synthesis
 
+### Screenshot
 
+![Successful Synthesis](Img/Img_3_Successful_Synthesis.png)
 
-\### Observation
+### Observation
 
+* Synthesis completed successfully.
+* Gate-level netlist was generated.
+* Area and timing reports were generated.
 
+---
 
-\- RTL code is mapped into standard cells.
+# Total Number of Cells
 
-\- Timing and area optimization are performed.
+### Screenshot
 
+![Cell Count](Img/Img_4_Total_Cell_Count.png)
 
+### Observation
 
-\---
+* The synthesis report provides the total number of standard cells used in the design.
+* Cell count directly impacts silicon area and power consumption.
 
+---
 
+# Number of D Flip-Flops
 
-\# Successful Synthesis
+### Screenshot
 
+![DFF Count](Img/Img_5_DFF_Count.png)
 
+### Observation
 
-\### Screenshot
+* D Flip-Flops are sequential elements used to store data.
+* The report shows the number of registers used in the processor design.
 
+---
 
+# Chip Area After Synthesis
 
-!\[Successful Synthesis](Img/Img\_3(Successful%20synthesis%20of%20picorv32a%20design).png)
+### Screenshot
 
+![Chip Area](Img/Img_6_Chip_Area.png)
 
+### Observation
 
-\### Observation
+* Chip area estimation is obtained after synthesis.
+* Area is calculated based on the standard cells utilized by the design.
 
+---
 
+# Synthesis Flow Summary
 
-\- Synthesis completed successfully.
+### Screenshot
 
-\- Gate-level netlist generated.
+![Synthesis Summary](Img/Img_7_Synthesis_Summary.png)
 
-\- Area and timing reports generated.
+### Observation
 
+* Provides an overview of area, cell count, and synthesis statistics.
+* Used to evaluate design quality before moving to floorplanning.
 
+---
 
-\---
+# SDC Constraint File
 
+### Screenshot
 
+![SDC Constraints](Img/Img_8_Yosys_SDC.png)
 
-\# Total Number of Cells
+### Understanding SDC
 
+* SDC (Synopsys Design Constraints) defines timing requirements for the design.
+* Clock period, input delays, output delays, and timing constraints are specified.
+* These constraints guide synthesis and timing optimization.
 
+### Observation
 
-\### Screenshot
+* After running synthesis, OpenLane automatically generates a file named `yosys.sdc` inside the `runs/<run_name>/tmp/` directory.
+* This file contains the timing constraints used during synthesis and is generated from the design configuration.
+* The constraints in `yosys.sdc` guide Yosys during technology mapping and cell selection.
+* The final area, timing, and power characteristics of the synthesized netlist depend on these constraints.
 
+---
 
+# Pin Placement Details
 
-!\[Cell Count](Img/Img\_4(Total%20no.%20of%20cells%20in%20picorv32a%20after%20synthesis).png)
+### Screenshot
 
+![Pin Placement](Img/Img_9_Pin_Placement.png)
 
+### Observation
 
-\### Observation
+* Input and output pins are placed around the boundary of the core area.
+* Clock pins are placed near the center to reduce clock distribution delay and clock skew.
+* Proper pin placement helps achieve efficient routing and improved timing performance.
 
+---
 
+# Logic Cell Placement Details
 
-\- The synthesis report provides the total number of standard cells used in the design.
+### Screenshot
 
-\- Cell count directly impacts silicon area and power consumption.
+![Logic Cell Placement](Img/Img_10_Logic_Cell_Placement.png)
 
+### Observation
 
+* Placement blockages are created near I/O pin regions.
+* Standard cells are prevented from being placed inside blockage areas.
+* This helps reduce routing congestion and improves routing quality.
+* Proper placement ensures better timing and utilization.
 
-\---
+---
 
+# Key Learnings
 
+* Introduction to the OpenLANE flow.
+* Understanding of the Sky130 PDK.
+* RTL-to-Gate-Level Netlist conversion through synthesis.
+* Importance of timing constraints using SDC files.
+* Analysis of area and cell count reports.
+* Basics of pin placement and placement blockages.
+* Preparation of the design for floorplanning and placement stages.
 
-\# Number of D Flip-Flops
+---
 
+# Conclusion
 
-
-\### Screenshot
-
-
-
-!\[DFF Count](Img/Img\_5(No.%20of%20cells%20of%20D-FF%20after%20synthesis).png)
-
-
-
-\### Observation
-
-
-
-\- D Flip-Flops are sequential elements used to store data.
-
-\- The report shows the number of registers used in the processor design.
-
-
-
-\---
-
-
-
-\# Chip Area After Synthesis
-
-
-
-\### Screenshot
-
-
-
-!\[Chip Area](Img/Img\_6(Chip%20area%20of%20picorv32a%20after%20synthesis).png)
-
-
-
-\### Observation
-
-
-
-\- Chip area estimation is obtained after synthesis.
-
-\- Area is calculated based on the standard cells utilized by the design.
-
-
-
-\---
-
-
-
-\# Synthesis Flow Summary
-
-
-
-\### Screenshot
-
-
-
-!\[Synthesis Summary](Img/Img\_7(Synthesis%20flow%20summary).png)
-
-
-
-\### Observation
-
-
-
-\- Provides an overview of area, cell count, and synthesis statistics.
-
-\- Used to evaluate design quality before moving to floorplanning.
-
-
-
-\---
-
-
-
-\# SDC Constraint File
-
-
-
-\### Screenshot
-
-
-
-!\[SDC Constraints](Img/Img\_8(sdc%20constraint%20file%20of%20yosys%20for%20picorv32a%20design).png)
-
-
-
-\- SDC (Synopsys Design Constraints) defines timing requirements.
-
-\- Clock period, input delays, output delays, and timing constraints are specified.
-
-\- These constraints guide synthesis and timing optimization.
-
-
-
-\### Observation
-
-
-
-\- After running synthesis, OpenLane automatically generates a file named `yosys.sdc` inside the `runs/<run\\\_name>/tmp/` directory.
-
-
-
-\- This file contains the timing constraints used during synthesis. It is generated by OpenLane from the design configuration and includes clock definitions and timing requirements for the design.
-
-
-
-\- The constraints in `yosys.sdc` guide Yosys during technology mapping and cell selection, helping the synthesizer optimize the design to meet the specified timing goals. Therefore, the final area, timing, and power characteristics of the synthesized netlist depend on these constraints.
-
-
-
-\---
-
-
-
-\# Pin Placement Details
-
-
-
-\### Screenshot
-
-
-
-!\[Pin Placement](Img/Img\_9(Pin%20placement%20details).png)
-
-
-
-\### Observation
-
-
-
-\- Input and output pins are placed around the boundary of the core area.
-
-\- Clock pins are placed near the center to reduce clock distribution delay and skew.
-
-\- Proper pin placement helps achieve efficient routing and better timing.
-
-
-
-\---
-
-
-
-\# Logic Cell Placement Details
-
-
-
-\### Screenshot
-
-
-
-!\[Logic Cell Placement](Img/Img\_10(Logic%20cell%20placement%20details).png)
-
-
-
-\### Observation
-
-
-
-\- Placement blockages are created near I/O pin regions.
-
-\- Standard cells are prevented from being placed in blockage areas.
-
-\- This helps reduce routing congestion and improves routing quality.
-
-\- Proper placement ensures better timing and utilization.
-
-
-
-\---
-
-
-
-\# Key Learnings
-
-
-
-\- Introduction to OpenLANE flow.
-
-\- Understanding of Sky130 PDK.
-
-\- RTL to Gate-Level Netlist conversion through synthesis.
-
-\- Importance of timing constraints using SDC files.
-
-\- Analysis of area and cell count reports.
-
-\- Basics of pin placement and placement blockages.
-
-\- Preparation of design for floorplanning and placement stages.
-
-
-
-\---
-
-
-
-\# Conclusion
-
-
-
-Day-1 focused on understanding the OpenLANE flow and synthesis process using the picorv32a RISC-V processor design. The synthesis reports, timing constraints, pin placement, and floorplanning concepts provide the foundation for the subsequent physical design stages.
-
+Day-1 focused on understanding the OpenLANE flow and synthesis process using the picorv32a RISC-V processor design. The synthesis reports, timing constraints, pin placement, and floorplanning concepts provide the foundation for the subsequent physical design stages in the RTL-to-GDSII flow.
