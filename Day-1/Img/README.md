@@ -4,7 +4,7 @@
 
 The objective of Day-1 is to understand the basic ASIC design flow, OpenLANE framework, synthesis process, design constraints, and floorplanning concepts using the picorv32a design.
 
----
+--- 
 
 # ASIC Design Flow
 
