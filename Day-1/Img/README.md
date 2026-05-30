@@ -54,7 +54,7 @@ prep -design picorv32a
 
 ### Screenshot
 
-![OpenLANE Invoke](Img/Img_1_OpenLane_Invoke.png)
+![OpenLANE Invoke](Day-1/Img/Img_1_OpenLane_Invoke.png)
 
 ### Observation
 
@@ -75,7 +75,7 @@ run_synthesis
 
 ### Screenshot
 
-![Running Synthesis](Img/Img_2_Running_Synthesis.png)
+![Running Synthesis](Day-1/Img/Img_2_Running_Synthesis.png)
 
 ### Observation
 
@@ -88,7 +88,7 @@ run_synthesis
 
 ### Screenshot
 
-![Successful Synthesis](Img/Img_3_Successful_Synthesis.png)
+![Successful Synthesis](Day-1/Img/Img_3_Successful_Synthesis.png)
 
 ### Observation
 
@@ -102,7 +102,7 @@ run_synthesis
 
 ### Screenshot
 
-![Cell Count](Img/Img_4_Total_Cell_Count.png)
+![Cell Count](Day-1/Img/Img_4_Total_Cell_Count.png)
 
 ### Observation
 
@@ -115,7 +115,7 @@ run_synthesis
 
 ### Screenshot
 
-![DFF Count](Img/Img_5_DFF_Count.png)
+![DFF Count](Day-1/Img/Img_5_DFF_Count.png)
 
 ### Observation
 
@@ -128,7 +128,7 @@ run_synthesis
 
 ### Screenshot
 
-![Chip Area](Img/Img_6_Chip_Area.png)
+![Chip Area](Day-1/Img/Img_6_Chip_Area.png)
 
 ### Observation
 
@@ -141,7 +141,7 @@ run_synthesis
 
 ### Screenshot
 
-![Synthesis Summary](Img/Img_7_Synthesis_Summary.png)
+![Synthesis Summary](Day-1/Img/Img_7_Synthesis_Summary.png)
 
 ### Observation
 
@@ -154,7 +154,7 @@ run_synthesis
 
 ### Screenshot
 
-![SDC Constraints](Img/Img_8_Yosys_SDC.png)
+![SDC Constraints](Day-1/Img/Img_8_Yosys_SDC.png)
 
 ### Understanding SDC
 
@@ -175,7 +175,7 @@ run_synthesis
 
 ### Screenshot
 
-![Pin Placement](Img/Img_9_Pin_Placement.png)
+![Pin Placement](Day-1/Img/Img_9_Pin_Placement.png)
 
 ### Observation
 
@@ -189,7 +189,7 @@ run_synthesis
 
 ### Screenshot
 
-![Logic Cell Placement](Img/Img_10_Logic_Cell_Placement.png)
+![Logic Cell Placement](Day-1/Img/Img_10_Logic_Cell_Placement.png)
 
 ### Observation
 
