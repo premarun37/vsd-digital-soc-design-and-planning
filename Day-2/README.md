@@ -1,980 +1,431 @@
-\# Day 2 - Good Floorplan vs Bad Floorplan and Introduction to Library Cells
+# Day 2 - Floorplanning, Power Planning and Placement
 
+## Objective
 
+The objective of Day-2 is to understand the floorplanning, power planning, and placement stages of the ASIC physical design flow using OpenLANE and the Sky130 PDK.
 
-\## Objective
+---
 
+# Introduction to Floorplanning
 
+Floorplanning is the first stage of physical design after synthesis. It determines the physical dimensions of the chip core and defines the placement area for standard cells, macros, power networks, and I/O pins.
 
-The objective of Day-2 is to understand the floorplanning and placement stages of the ASIC physical design flow. This includes studying floorplan parameters, die/core area calculation, power planning, pin placement, tap cell insertion, and standard-cell placement using OpenLANE and the Sky130 PDK.
+### Goals of Floorplanning
 
+* Define chip and core dimensions.
+* Determine utilization factor and aspect ratio.
+* Place I/O pins around the core boundary.
+* Create routing channels.
+* Insert tap cells and decap cells.
+* Prepare the design for power planning and placement.
 
+---
 
-\---
+# Floorplan Configuration Parameters
 
+### Screenshot
 
+![Floorplan Details](Img/Img_11_Floorplan_details.png)
 
-\# Theory
+### Observation
 
+* Floorplanning parameters are defined through OpenLANE configuration files.
+* These parameters determine the size and shape of the core area.
+* Proper floorplanning reduces routing congestion and improves timing.
 
+---
 
-\## What is Floorplanning?
+### Screenshot
 
+![Floorplan Configuration](Img/Img_12_Floorplan_config_details.png)
 
+### Observation
 
-Floorplanning is the process of defining the physical structure of the chip before placement and routing.
+* Core utilization defines the percentage of the core occupied by standard cells.
+* Aspect ratio determines the shape of the core.
+* Margins provide routing space between the core and die boundaries.
 
+---
 
+### Screenshot
 
-The main goals of floorplanning are:
+![Sky130 Configuration](Img/Img_13_sky130_fd_sc_hd_config_details.png)
 
+### Observation
 
+* Technology-specific parameters are obtained from the Sky130 standard-cell library.
+* Cell dimensions and placement constraints are defined in these files.
 
-\* Determining die and core dimensions.
+---
 
-\* Defining the utilization factor.
+# Running Floorplan
 
-\* Defining the aspect ratio.
-
-\* Placing macros and I/O pins.
-
-\* Planning the power distribution network (PDN).
-
-\* Reserving routing resources.
-
-
-
-A good floorplan minimizes congestion, improves timing, and reduces chip area.
-
-
-
-\---
-
-
-
-\## Utilization Factor
-
-
-
-The utilization factor determines the percentage of core area occupied by standard cells.
-
-
-
-```text
-
-Utilization Factor =
-
-(Standard Cell Area / Core Area) × 100
-
-```
-
-
-
-Higher utilization results in a smaller chip area but may increase routing congestion.
-
-
-
-Lower utilization reduces congestion but increases chip area.
-
-
-
-In the OpenLANE configuration:
-
-
+### Command
 
 ```tcl
-
-set ::env(FP\_CORE\_UTIL) 50
-
+run_floorplan
 ```
 
+### Screenshot
 
+![Floorplan Command](Img/Img_14_floorplan_cmd.png)
 
-The design is configured for 50% core utilization.
+### Observation
 
+* OpenLANE starts floorplanning using synthesized netlists and configuration parameters.
+* Core dimensions and pin locations are calculated.
 
+---
 
-\---
+### Screenshot
 
+![Floorplan Success](Img/Img_15_floorplan_success.png)
 
+### Observation
 
-\## Aspect Ratio
+* Floorplanning completed successfully.
+* DEF files and reports were generated.
 
+---
 
+# Floorplan Results
 
-Aspect ratio is defined as:
+### Screenshot
 
+![Floorplan Result Files](Img/Img_16_floorplan_results_files.png)
 
+### Observation
 
-```text
+* Floorplan output files are stored in the results directory.
+* DEF files contain physical layout information.
 
-Aspect Ratio =
+---
 
-Core Height / Core Width
+### Screenshot
 
+![Die Area Information](Img/Img_17_floorplan_die_area_info.png)
+
+### Observation
+
+* Die area and core area dimensions are reported.
+* Core utilization directly affects final chip area and routing congestion.
+
+---
+
+# Viewing Floorplan in Magic
+
+### Command
+
+```bash
+magic -T sky130A.tech \
+lef read ../../tmp/merged.lef \
+def read picorv32a.floorplan.def &
 ```
 
+### Screenshot
 
+![Magic GUI Command](Img/Img_18_floorplan_result_gui_cmd.png)
 
-In the configuration:
+### Observation
 
+* Magic loads the floorplan DEF file and displays the layout.
+* The layout can be inspected visually.
 
+---
+
+### Screenshot
+
+![Magic Layout View](Img/Img_19_floorplan_result_gui_view.png)
+
+### Observation
+
+* The die boundary and core area are visible.
+* I/O pins are placed around the boundary.
+
+---
+
+# I/O Pin Placement
+
+### Screenshot
+
+![Equidistant Pins](Img/Img_20_equidistant_cells.png)
+
+### Observation
+
+* I/O pins are placed equidistantly around the core boundary.
+* This placement is controlled by the parameter `FP_IO_MODE`.
+
+---
+
+### Screenshot
+
+![Cell Details](Img/Img_21_cell_1_details.png)
+
+### Observation
+
+* Magic's `what` command displays information about selected objects.
+* Cell instances and coordinates can be inspected.
+
+---
+
+### Screenshot
+
+![I/O Pin Details](Img/Img_22_io_pin_details.png)
+
+### Observation
+
+* Input and output ports are placed on metal layers.
+* Proper pin placement improves routability.
+
+---
+
+### Screenshot
+
+![Standard Cell Details](Img/Img_23_standard_cell_details.png)
+
+### Observation
+
+* Standard cells are visible inside the core area.
+* Cells remain unplaced at the floorplanning stage.
+
+---
+
+### Screenshot
+
+![Metal Details](Img/Img_24_metal_details.png)
+
+### Observation
+
+* Metal layers are used for routing signals and power connections.
+* Multiple routing layers are available in the Sky130 process.
+
+---
+
+# Power Planning
+
+Power planning ensures reliable delivery of VDD and GND throughout the chip.
+
+### Objectives
+
+* Minimize IR drop.
+* Reduce electromigration.
+* Provide uniform power distribution.
+* Improve reliability.
+
+---
+
+### Screenshot
+
+![Configuration After Floorplan 1](Img/Img_25_config_details_after_floorplan_1.png)
+
+### Screenshot
+
+![Configuration After Floorplan 2](Img/Img_26_config_details_after_floorplan_2.png)
+
+### Observation
+
+* Power planning parameters are generated after floorplanning.
+* Power grid generation depends on these settings.
+
+---
+
+# Floorplan Log Analysis
+
+### Screenshot
+
+![Floorplan Log Files](Img/Img_27_floorplan_log_files.png)
+
+### Observation
+
+* Log files record all floorplanning activities.
+* Errors and warnings can be analyzed through logs.
+
+---
+
+### Screenshot
+
+![IO Placer Logs](Img/Img_28_io_placer_log_details.png)
+
+### Observation
+
+* The I/O placer determines the location of input and output pins.
+* Equidistant placement helps reduce congestion.
+
+---
+
+### Screenshot
+
+![Tap Cell Logs](Img/Img_29_tap_cell_log_details.png)
+
+### Observation
+
+* Tap cells prevent latch-up by connecting substrate and wells to power rails.
+* Tap cell insertion is an important reliability requirement.
+
+---
+
+### Screenshot
+
+![PDN Logs 1](Img/Img_30_pdn_log_details_1.png)
+
+### Screenshot
+
+![PDN Logs 2](Img/Img_31_pdn_log_details_2.png)
+
+### Observation
+
+* Power Distribution Network (PDN) generation creates power rails and straps.
+* PDN ensures stable voltage delivery across the chip.
+
+---
+
+# Placement
+
+Placement assigns physical locations to standard cells inside the core area.
+
+### Objectives
+
+* Reduce wire length.
+* Minimize congestion.
+* Improve timing.
+* Optimize power consumption.
+
+---
+
+# Running Placement
+
+### Command
 
 ```tcl
-
-set ::env(FP\_ASPECT\_RATIO) 1
-
+run_placement
 ```
 
+### Screenshot
 
+![Placement Command](Img/Img_32_placement_cmd.png)
 
-An aspect ratio of 1 indicates a square floorplan.
+### Observation
 
+* OpenLANE starts global placement followed by detailed placement.
+* Cells are arranged based on connectivity and timing requirements.
 
+---
 
-\---
+### Screenshot
 
+![Placement Success](Img/Img_33_placement_success.png)
 
+### Observation
 
-\## Power Planning
+* Placement completed successfully.
+* Standard cells were assigned legal physical locations.
 
+---
 
+# Viewing Placement Results
 
-Power planning ensures reliable distribution of VDD and VSS throughout the design.
+### Screenshot
 
+![Placement GUI](Img/Img_34_placement_view_gui.png)
 
+### Observation
 
-The Power Distribution Network (PDN) consists of:
+* Standard cells are distributed across the core area.
+* Placement density can be visually inspected.
 
+---
 
+### Screenshot
 
-\* Power rails
+![Placement Congestion 1](Img/Img_35_placement_congested_view_1.png)
 
-\* Power straps
+### Observation
 
-\* Power rings
+* Congested regions may lead to routing difficulties.
+* Placement optimization attempts to reduce congestion.
 
-\* Tap cells
+---
 
+### Screenshot
 
+![Placement Cell Details](Img/Img_36_placement_cell_detail.png)
 
-The PDN helps reduce:
+### Observation
 
+* Cell-level placement information can be viewed using Magic.
+* Instance names and coordinates are available.
 
+---
 
-\* IR Drop
+### Screenshot
 
-\* Electromigration
+![Placement Congestion 2](Img/Img_37_placement_congested_view_2.png.png)
 
-\* Power integrity issues
+### Observation
 
+* Congestion analysis helps evaluate placement quality before routing.
 
+---
 
-\---
+### Screenshot
 
+![Metal Cell Details](Img/Img_38_placement_metal_cell_details.png)
 
+### Observation
 
-\## Pin Placement
+* Routing layers become more visible after placement analysis.
 
+---
 
+### Screenshot
 
-Pins are placed around the boundary of the core area.
+![Mask Details](Img/Img_39_mask_details_placement.png)
 
+### Observation
 
+* Layout layers correspond to mask layers used during fabrication.
 
-In the configuration:
+---
 
+### Screenshot
 
+![Metal 2 Details](Img/Img_40_metal_2_detail_placement.png)
 
-```tcl
+### Screenshot
 
-set ::env(FP\_IO\_MODE) 1
+![Metal 3 Details](Img/Img_41_metal_3_details_placement.png)
 
-```
+### Observation
 
+* Different metal layers provide routing resources for signal connections.
+* Higher metal layers generally support longer routes.
 
+---
 
-Pins are placed using the random equidistant placement mode.
+### Screenshot
 
+![Placed Standard Cells](Img/Img_42_standard_cells_placed_after_placement.png)
 
+### Observation
 
-This helps:
+* Standard cells are fully placed inside the core area.
+* The design is now ready for Clock Tree Synthesis (CTS).
 
+---
 
+# Key Learnings
 
-\* Reduce routing congestion.
+* Understanding floorplanning concepts and parameters.
+* Analysis of core utilization and aspect ratio.
+* Viewing floorplan layouts using Magic.
+* Understanding I/O pin placement strategies.
+* Importance of tap cells and power planning.
+* Power Distribution Network (PDN) generation.
+* Global and detailed placement concepts.
+* Congestion analysis and placement quality evaluation.
 
-\* Improve timing.
+---
 
-\* Distribute signals uniformly.
+# Conclusion
 
-
-
-\---
-
-
-
-\## Placement
-
-
-
-Placement assigns physical locations to all standard cells within the core area.
-
-
-
-Objectives of placement:
-
-
-
-\* Minimize wire length.
-
-\* Reduce congestion.
-
-\* Improve timing.
-
-\* Improve routability.
-
-
-
-\---
-
-
-
-\# Floorplan Configuration
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan Details](Img/Img\_11\_Floorplan\_details.png)
-
-
-
-\### Observation
-
-
-
-\* Floorplanning parameters are configured before physical implementation.
-
-\* Core utilization, aspect ratio, margins, and PDN parameters are defined.
-
-\* These parameters determine the physical dimensions of the design.
-
-
-
-\---
-
-
-
-\# Floorplan Configuration File
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan Configuration](Img/Img\_12\_Floorplan\_config\_details.png)
-
-
-
-\### Observation
-
-
-
-\* The OpenLANE floorplan configuration file contains parameters controlling floorplan generation.
-
-\* Core utilization is set to 50%.
-
-\* Aspect ratio is set to 1.
-
-\* PDN generation and I/O placement options are enabled.
-
-
-
-\---
-
-
-
-\# Sky130 Standard Cell Configuration
-
-
-
-\### Screenshot
-
-
-
-!\[Sky130 Configuration](Img/Img\_13\_sky130\_fd\_sc\_hd\_config\_details.png)
-
-
-
-\### Observation
-
-
-
-\* The Sky130 HD library provides the standard cells used during implementation.
-
-\* Cell dimensions, placement rules, and technology-specific parameters are defined in the library.
-
-
-
-\---
-
-
-
-\# Running Floorplanning
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan Command](Img/Img\_14\_floorplan\_cmd.png)
-
-
-
-\### Observation
-
-
-
-\* The floorplanning stage is initiated using OpenLANE.
-
-\* OpenLANE computes the die area and core area based on utilization and aspect ratio constraints.
-
-
-
-\---
-
-
-
-\# Successful Floorplan Generation
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan Success](Img/Img\_15\_floorplan\_success.png)
-
-
-
-\### Observation
-
-
-
-\* Floorplan generation completed successfully.
-
-\* Core dimensions and floorplan data were generated.
-
-
-
-\---
-
-
-
-\# Generated Floorplan Files
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan Files](Img/Img\_16\_floorplan\_results\_files.png)
-
-
-
-\### Observation
-
-
-
-\* Floorplan reports and DEF files are generated.
-
-\* These files are used in later placement and routing stages.
-
-
-
-\---
-
-
-
-\# Die Area Information
-
-
-
-\### Screenshot
-
-
-
-!\[Die Area Information](Img/Img\_17\_floorplan\_die\_area\_info.png)
-
-
-
-\### Observation
-
-
-
-\* Die dimensions and core dimensions are reported.
-
-\* These values are calculated using utilization factor and aspect ratio settings.
-
-
-
-\---
-
-
-
-\# Viewing Floorplan in Magic
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan GUI Command](Img/Img\_18\_floorplan\_result\_gui\_cmd.png)
-
-
-
-\### Observation
-
-
-
-\* Magic is used to visualize the generated floorplan.
-
-\* LEF and DEF files are loaded to inspect the design physically.
-
-
-
-\---
-
-
-
-\# Floorplan Layout View
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan Layout](Img/Img\_19\_floorplan\_result\_gui\_view.png)
-
-
-
-\### Observation
-
-
-
-\* Core area and die boundary can be visualized.
-
-\* Floorplan structure is verified before placement.
-
-
-
-\---
-
-
-
-\# Equidistant I/O Pins
-
-
-
-\### Screenshot
-
-
-
-!\[Equidistant Pins](Img/Img\_20\_equidistant\_cells.png)
-
-
-
-\### Observation
-
-
-
-\* I/O pins are distributed around the core boundary.
-
-\* This behavior is controlled by FP\_IO\_MODE = 1.
-
-\* Proper pin placement improves routing efficiency.
-
-
-
-\---
-
-
-
-\# Cell Identification Using Magic
-
-
-
-\### Screenshot
-
-
-
-!\[Cell Details](Img/Img\_21\_cell\_1\_details.png)
-
-
-
-\### Observation
-
-
-
-\* The `what` command in Magic identifies selected cells.
-
-\* Cell information and hierarchy can be inspected interactively.
-
-
-
-\---
-
-
-
-\# I/O Pin Details
-
-
-
-\### Screenshot
-
-
-
-!\[I/O Pin Details](Img/Img\_22\_io\_pin\_details.png)
-
-
-
-\### Observation
-
-
-
-\* Input and output pins can be examined individually.
-
-\* Pin locations influence routing quality and timing.
-
-
-
-\---
-
-
-
-\# Standard Cell Details
-
-
-
-\### Screenshot
-
-
-
-!\[Standard Cell Details](Img/Img\_23\_standard\_cell\_details.png)
-
-
-
-\### Observation
-
-
-
-\* Standard cells from the Sky130 HD library are visible in the floorplan.
-
-\* Cell properties can be inspected using Magic.
-
-
-
-\---
-
-
-
-\# Metal Layer Details
-
-
-
-\### Screenshot
-
-
-
-!\[Metal Details](Img/Img\_24\_metal\_details.png)
-
-
-
-\### Observation
-
-
-
-\* Metal layers are used for signal and power routing.
-
-\* Different routing layers support different routing directions.
-
-
-
-\---
-
-
-
-\# Floorplan Configuration After Execution
-
-
-
-\### Screenshot
-
-
-
-!\[Configuration After Floorplan 1](Img/Img\_25\_config\_details\_after\_floorplan\_1.png)
-
-
-
-!\[Configuration After Floorplan 2](Img/Img\_26\_config\_details\_after\_floorplan\_2.png)
-
-
-
-\### Observation
-
-
-
-\* OpenLANE updates configuration values during floorplan generation.
-
-\* Generated parameters are used in subsequent stages.
-
-
-
-\---
-
-
-
-\# Floorplan Log Files
-
-
-
-\### Screenshot
-
-
-
-!\[Floorplan Logs](Img/Img\_27\_floorplan\_log\_files.png)
-
-
-
-\### Observation
-
-
-
-\* Log files record floorplan execution details.
-
-\* Useful for debugging and verification.
-
-
-
-\---
-
-
-
-\# I/O Placement Logs
-
-
-
-\### Screenshot
-
-
-
-!\[IO Placer Logs](Img/Img\_28\_io\_placer\_log\_details.png)
-
-
-
-\### Observation
-
-
-
-\* Pin placement operations are recorded.
-
-\* Confirms successful I/O placement.
-
-
-
-\---
-
-
-
-\# Tap Cell Insertion
-
-
-
-\### Screenshot
-
-
-
-!\[Tap Cell Logs](Img/Img\_29\_tap\_cell\_log\_details.png)
-
-
-
-\### Observation
-
-
-
-\* Tap cells connect substrate and wells to power rails.
-
-\* They prevent latch-up and improve reliability.
-
-
-
-\---
-
-
-
-\# Power Distribution Network (PDN)
-
-
-
-\### Screenshot
-
-
-
-!\[PDN Logs 1](Img/Img\_30\_pdn\_log\_details\_1.png)
-
-
-
-!\[PDN Logs 2](Img/Img\_31\_pdn\_log\_details\_2.png)
-
-
-
-\### Observation
-
-
-
-\* PDN generation creates power rails and power straps.
-
-\* Ensures stable power delivery across the design.
-
-
-
-\---
-
-
-
-\# Running Placement
-
-
-
-\### Screenshot
-
-
-
-!\[Placement Command](Img/Img\_32\_placement\_cmd.png)
-
-
-
-\### Observation
-
-
-
-\* Placement assigns locations to standard cells.
-
-\* Placement optimization attempts to minimize wire length and congestion.
-
-
-
-\---
-
-
-
-\# Successful Placement
-
-
-
-\### Screenshot
-
-
-
-!\[Placement Success](Img/Img\_33\_placement\_success.png)
-
-
-
-\### Observation
-
-
-
-\* Placement completed successfully.
-
-\* Standard cells were distributed throughout the core area.
-
-
-
-\---
-
-
-
-\# Placement Layout View
-
-
-
-\### Screenshot
-
-
-
-!\[Placement Layout](Img/Img\_34\_placement\_view\_gui.png)
-
-
-
-\### Observation
-
-
-
-\* Standard cells are visible inside the core region.
-
-\* Placement quality can be visually inspected.
-
-
-
-\---
-
-
-
-\# Congestion Analysis
-
-
-
-\### Screenshot
-
-
-
-!\[Congestion View 1](Img/Img\_35\_placement\_congested\_view\_1.png)
-
-
-
-!\[Congestion View 2](Img/Img\_37\_placement\_congested\_view\_2.png.png)
-
-
-
-\### Observation
-
-
-
-\* Congested regions indicate areas with high routing demand.
-
-\* Congestion must be minimized for successful routing.
-
-
-
-\---
-
-
-
-\# Placement Cell Details
-
-
-
-\### Screenshot
-
-
-
-!\[Placement Cell Details](Img/Img\_36\_placement\_cell\_detail.png)
-
-
-
-\### Observation
-
-
-
-\* Individual placed cells can be inspected using Magic.
-
-\* Placement legality and orientation can be verified.
-
-
-
-\---
-
-
-
-\# Metal Layers After Placement
-
-
-
-\### Screenshot
-
-
-
-!\[Metal Cell Details](Img/Img\_38\_placement\_metal\_cell\_details.png)
-
-
-
-!\[Metal 2 Details](Img/Img\_40\_metal\_2\_detail\_placement.png)
-
-
-
-!\[Metal 3 Details](Img/Img\_41\_metal\_3\_details\_placement.png)
-
-
-
-\### Observation
-
-
-
-\* Metal layers provide routing resources for signals and power.
-
-\* Different layers are used to reduce routing congestion.
-
-
-
-\---
-
-
-
-\# Standard Cells After Placement
-
-
-
-\### Screenshot
-
-
-
-!\[Placed Standard Cells](Img/Img\_42\_standard\_cells\_placed\_after\_placement.png)
-
-
-
-\### Observation
-
-
-
-\* Standard cells are distributed throughout the core area.
-
-\* Placement prepares the design for Clock Tree Synthesis (CTS).
-
-
-
-\---
-
-
-
-\# Key Learnings
-
-
-
-\* Understanding floorplanning concepts.
-
-\* Utilization factor and aspect ratio.
-
-\* Power planning and PDN generation.
-
-\* Pin placement strategies.
-
-\* Tap cell insertion.
-
-\* Physical layout inspection using Magic.
-
-\* Standard-cell placement.
-
-\* Congestion analysis and placement quality.
-
-
-
-\---
-
-
-
-\# Conclusion
-
-
-
-Day-2 focused on floorplanning, power planning, and placement using OpenLANE and the Sky130 PDK. The floorplan was generated based on utilization and aspect ratio constraints, the PDN was created for reliable power delivery, and standard cells were successfully placed within the core area, preparing the design for Clock Tree Synthesis and routing.
-
-
-
+Day-2 focused on floorplanning, power planning, and placement stages of the OpenLANE flow. The generated floorplan, PDN, and placement results provide the physical foundation required for the next stages of the ASIC implementation flow, including Clock Tree Synthesis (CTS), routing, timing optimization, and signoff verification.
