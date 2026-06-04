@@ -21,6 +21,126 @@ Floorplanning is the first stage of physical design after synthesis. It determin
 
 ---
 
+# Floorplanning Theory
+
+## What is Floorplanning?
+
+Floorplanning is the first physical design stage after synthesis. It defines the chip dimensions, core area, placement regions, power network, and I/O locations.
+
+A good floorplan helps reduce congestion, improve timing, and optimize chip area.
+
+---
+
+## Key Floorplanning Parameters
+
+### 1. Utilization Factor
+
+Represents the percentage of core area occupied by standard cells.
+
+\[
+\text{Utilization Factor} = \frac{\text{Netlist Area}}{\text{Core Area}}
+\]
+
+- Higher utilization reduces chip area.
+- Excessive utilization can increase routing congestion.
+
+### 2. Aspect Ratio
+
+Determines the shape of the core.
+
+\[
+\text{Aspect Ratio} = \frac{\text{Core Height}}{\text{Core Width}}
+\]
+
+- Aspect Ratio = 1 → Square core
+- Aspect Ratio > 1 → Tall core
+- Aspect Ratio < 1 → Wide core
+
+### 3. Core Area and Die Area
+
+- **Core Area:** Region used for standard cell placement.
+- **Die Area:** Total chip area including core, I/O cells, and margins.
+
+---
+
+## Important Physical Design Cells
+
+### Endcap / Boundary Cells
+- Placed at row boundaries.
+- Prevent edge-related DRC violations.
+
+### Well Tap Cells
+- Connect wells to VDD/GND.
+- Help prevent latch-up.
+
+### Hard Macros
+- Fixed-layout blocks.
+- Examples: SRAM, PLL, Analog IP.
+
+### Soft Macros
+- RTL-defined functional blocks.
+- Implemented during synthesis and placement.
+
+### IP Blocks
+- Reusable pre-verified design modules.
+- Examples: UART, SPI, I2C, Processors.
+
+### I/O Pins
+- Interface between chip and external world.
+- Placed around the core boundary.
+
+### Spare Cells
+- Reserved cells for future ECO modifications.
+- Reduce redesign effort.
+
+### Decap Cells
+- Store local charge.
+- Reduce voltage fluctuations and noise.
+
+### Guard Ring Cells
+- Surround sensitive blocks.
+- Reduce noise coupling and latch-up effects.
+
+---
+
+## Power Planning
+
+Power planning creates the Power Distribution Network (PDN) using:
+
+- Power Rails
+- Power Straps
+- Power Rings
+
+Objectives:
+
+- Reduce IR drop
+- Prevent electromigration
+- Ensure reliable power delivery
+
+---
+
+## Pin Placement
+
+I/O pins are placed around the core boundary to:
+
+- Reduce routing congestion
+- Minimize wire length
+- Improve timing performance
+
+---
+
+## Importance of Floorplanning
+
+A good floorplan:
+
+- Improves timing closure
+- Reduces congestion
+- Optimizes chip area
+- Improves power distribution
+- Simplifies placement and routing
+
+---
+
 # Floorplan Configuration Parameters
 
 ### Screenshot
