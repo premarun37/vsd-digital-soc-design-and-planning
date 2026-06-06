@@ -48,9 +48,9 @@ Utilization Factor = Netlist Area / Core Area
 
 Determines the shape of the core.
 
-\[
-\text{Aspect Ratio} = \frac{\text{Core Height}}{\text{Core Width}}
-\]
+```text
+Aspect Ratio = Core Height / Core Width
+```
 
 - Aspect Ratio = 1 → Square core
 - Aspect Ratio > 1 → Tall core
