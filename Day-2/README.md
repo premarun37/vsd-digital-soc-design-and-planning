@@ -37,9 +37,9 @@ A good floorplan helps reduce congestion, improve timing, and optimize chip area
 
 Represents the percentage of core area occupied by standard cells.
 
-\[
-\text{Utilization Factor} = \frac{\text{Netlist Area}}{\text{Core Area}}
-\]
+```text
+Utilization Factor = Netlist Area / Core Area
+```
 
 - Higher utilization reduces chip area.
 - Excessive utilization can increase routing congestion.
